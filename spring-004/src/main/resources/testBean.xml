@@ -1,0 +1,3 @@
+<beans>
+    <bean class="com.itwang.spring4.UserService"></bean>
+</beans>

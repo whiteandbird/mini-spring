@@ -1,0 +1,7 @@
+<beans>
+    <bean class="com.itwang5.UserService">
+        <property name="name" >123</property>
+    </bean>
+    <bean class="com.itwang5.MyBeanFactoryPostProcessor"/>
+    <bean class="com.itwang5.MyBeanPostProcessor"/>
+</beans>
