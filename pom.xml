@@ -14,6 +14,7 @@
         <module>spring-003</module>
         <module>spring-004</module>
         <module>spring-005</module>
+        <module>spring-006</module>
     </modules>
 
     <name>a mini spring</name>

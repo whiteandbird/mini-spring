@@ -1,0 +1,7 @@
+<beans>
+    <bean class="com.itwang6.UserService" init="init1" destroy="destroy">
+        <property name="name" >123</property>
+    </bean>
+    <bean class="com.itwang6.MyBeanFactoryPostProcessor"/>
+    <bean class="com.itwang6.MyBeanPostProcessor" destroy="test"/>
+</beans>
