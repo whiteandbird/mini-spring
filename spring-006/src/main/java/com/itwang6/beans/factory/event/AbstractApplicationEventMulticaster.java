@@ -2,6 +2,7 @@ package com.itwang6.beans.factory.event;
 
 import com.itwang6.beans.factory.BeanFactory;
 import com.itwang6.beans.factory.aware.BeanFactoryAware;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -12,6 +13,8 @@ import java.util.Set;
 
 import static com.itwang6.util.ClassUtils.isCglibProxyClass;
 
+
+@Slf4j
 public abstract class AbstractApplicationEventMulticaster implements ApplicationEventMulticaster, BeanFactoryAware {
 
     private Set<ApplicationListener<ApplicationEvent>> applicationListeners = new LinkedHashSet<>();
@@ -33,11 +36,19 @@ public abstract class AbstractApplicationEventMulticaster implements Application
         this.beanFactory = beanFactory;
     }
 
-    public List<ApplicationListener<?>> getApplicationListener(ApplicationEvent event){
+    /**
+     * 不需要关注具体实现类
+     * @param event
+     * @return
+     */
+    public List<ApplicationListener> getApplicationListener(ApplicationEvent event){
         LinkedList<ApplicationListener> res  = new LinkedList<>();
         for(ApplicationListener<ApplicationEvent> listener : applicationListeners){
-
+            if(ifSupportEvent(listener, event)){
+                res.add(listener);
+            }
         }
+        return res;
     }
 
     private boolean ifSupportEvent(ApplicationListener<ApplicationEvent> listener, ApplicationEvent applicationEvent){
@@ -50,6 +61,16 @@ public abstract class AbstractApplicationEventMulticaster implements Application
         Type genericInterface = targetClass.getGenericInterfaces()[0];
 
         Type actualTypeArgument = ((ParameterizedType) genericInterface).getActualTypeArguments()[0];
+        String clazzName = actualTypeArgument.getTypeName();
+        try{
+            Class<?> aClass = Class.forName(clazzName);
+            return aClass.isAssignableFrom(eventClass);
+
+        }catch (ClassNotFoundException e){
+            log.info("error");
+        }
+
+        return false;
 
     }
 

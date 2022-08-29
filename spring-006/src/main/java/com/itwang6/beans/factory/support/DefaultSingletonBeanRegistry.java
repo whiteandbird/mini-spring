@@ -32,6 +32,11 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
         singletonObjects.put(beanName, singletonObject);
     }
 
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) {
+        singletonObjects.put(beanName, singletonObject);
+    }
+
     public void registryDisposableBean(String beanName, DisposableAdapter disposableAdapter){
         disposableAdapterMap.put(beanName, disposableAdapter);
     }

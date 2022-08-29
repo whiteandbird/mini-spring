@@ -1,8 +1,12 @@
 package com.itwang6.beans.factory.event;
 
+import java.util.EventListener;
+
 /**
  * 需要监听哪个事件
  * @param <T>
  */
-public class ApplicationListener<T extends ApplicationEvent> {
+public interface ApplicationListener<T extends ApplicationEvent> extends EventListener {
+
+    void onEvent(T event);
 }

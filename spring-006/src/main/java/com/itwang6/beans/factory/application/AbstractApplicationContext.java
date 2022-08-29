@@ -3,6 +3,7 @@ package com.itwang6.beans.factory.application;
 import com.itwang6.BeansException;
 import com.itwang6.beans.factory.ConfigurableListableBeanFactory;
 import com.itwang6.beans.factory.aware.ApplicationContextPostProcessor;
+import com.itwang6.beans.factory.event.*;
 import com.itwang6.beans.factory.postProcessor.BeanFactoryPostProcessor;
 import com.itwang6.beans.factory.postProcessor.BeanPostProcessor;
 import com.itwang6.core.io.DefaultResourceLoader;
@@ -14,7 +15,11 @@ import java.util.Map;
  * @Descripter:
  * @Date: 2022:08:27  9:44
  */
-public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext{
+public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext, ApplicationEventPublisher {
+
+
+
+    private ApplicationEventMulticaster applicationEventMulticaster;
 
 
     @Override
@@ -35,9 +40,37 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         // 提前注册beanPostProcessor类型的bean 因为其他bean在执行的时候 需要这些bean
         invokeBeanPostProcessor(beanFactory);
 
+        // 注册广播器
+        registerMulicaster();
+
+        // 注册监听器
+        registerApplicationListener();
+
         // 提前初始化单例
         beanFactory.preInstantiateSingletons();
 
+        // 差发布事件了
+        finishRefresh();
+
+
+
+    }
+
+    private void finishRefresh() {
+        publishEvent(new ContextClosedEvent(this));
+    }
+
+    private void registerApplicationListener() {
+        Map<String, ApplicationListener> beansOfType = getBeansOfType(ApplicationListener.class);
+        for(ApplicationListener<?> listener : beansOfType.values()){
+            applicationEventMulticaster.addApplicationListener(listener);
+        }
+    }
+
+    private void registerMulicaster() {
+        ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+        applicationEventMulticaster  = new SimpleApplicationEventMulticaster(beanFactory);
+        beanFactory.registerSingleton("MULTI_CASTER", applicationEventMulticaster);
 
     }
 
@@ -47,6 +80,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         for(BeanPostProcessor beanPostProcessor : beanPostProcessorMap.values()){
             beanFactory.addPostProcessor(beanPostProcessor);
         }
+    }
+
+    @Override
+    public void publishEvent(ApplicationEvent applicationEvent) {
+        applicationEventMulticaster.multicastEvent(applicationEvent);
     }
 
     private void invokeBeanFactoryPostProcessor(ConfigurableListableBeanFactory beanFactory) {

@@ -7,4 +7,7 @@
     <bean class="com.itwang6.MyBeanPostProcessor" destroy="test"/>
     <bean class="com.itwang6.MyAware"/>
     <bean class="com.itwang6.ProxyFactoryBean" id="factoryBean"></bean>
+    <bean class="com.itwang6.ContextClousedApplicationListener"/>
+    <bean class="com.itwang6.TestListener"/>
+    <bean id="MULTI_CASTER" class="com.itwang6.UserCustomMulticaster"/>
 </beans>

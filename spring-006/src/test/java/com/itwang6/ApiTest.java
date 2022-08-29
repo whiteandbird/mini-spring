@@ -24,6 +24,8 @@ public class ApiTest {
         userService2.sayHello();
         userService3.sayHello();
 
+        context.publishEvent(new TestEvent(context, "hello world"));
+
 
 
     }
