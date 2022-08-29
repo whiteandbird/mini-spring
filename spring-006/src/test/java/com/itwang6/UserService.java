@@ -11,7 +11,6 @@ public class UserService {
     private IUserDao userDao;
 
     public void sayHello(){
-        System.out.println(userDao.hashCode());
         System.out.println(" ====== say hello ="+userDao.queryUserName("1")+"=========");
     }
 

@@ -34,6 +34,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
     // 创建factoryBean
     private Object doGetObjectFromFactoryBean(final FactoryBean factoryBean, final String beanName){
         try{
+            System.out.println("======创建factoryBean===="+beanName);
             return factoryBean.getObject();
         }catch (Exception e){
             e.printStackTrace();

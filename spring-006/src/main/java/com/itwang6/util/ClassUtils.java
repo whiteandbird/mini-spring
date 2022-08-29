@@ -13,4 +13,8 @@ public class ClassUtils {
         }
         return cl;
     }
+
+    public static boolean isCglibProxyClass(Class<?> clazz){
+        return clazz.getSimpleName().contains("&&");
+    }
 }
