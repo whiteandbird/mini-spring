@@ -5,6 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import com.itwang6.BeansException;
 import com.itwang6.PropertyValue;
 import com.itwang6.PropertyValues;
+import com.itwang6.beans.factory.aware.Aware;
+import com.itwang6.beans.factory.aware.BeanClassLoaderAware;
+import com.itwang6.beans.factory.aware.BeanFactoryAware;
+import com.itwang6.beans.factory.aware.BeanNameAware;
 import com.itwang6.beans.factory.lifescope.DisposableAdapter;
 import com.itwang6.beans.factory.lifescope.DisposableBean;
 import com.itwang6.beans.factory.lifescope.InitializeBean;
@@ -40,11 +44,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         // 注册销毁方法
         registryDisposableBeanIfNessary(bean, beanName, beanDefinition);
-        addSingleton(beanName, bean);
+        // 需要判断是否是单例
+        if(beanDefinition.isSingleton()){
+            addSingleton(beanName, bean);
+        }
+
         return bean;
     }
 
     protected void registryDisposableBeanIfNessary(Object bean, String beanName, BeanDefinition beanDefinition){
+        if(!beanDefinition.isSingleton()){
+            return;
+        }
         if(bean instanceof DisposableBean || StrUtil.isNotEmpty(beanDefinition.getDestroyMethodName())){
             registryDisposableBean(beanName, new DisposableAdapter(bean, beanName, beanDefinition));
         }
@@ -76,6 +87,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     protected Object initializeBean(Object bean, String beanName, BeanDefinition definition){
         Object wrapperBean = bean;
+        if(bean instanceof Aware){
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware){
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(getClassLoader());
+            }
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+        }
         try{
             wrapperBean = applyBeanPostProcessorBeforeInitialzation(bean, beanName);
             invokeInitMethod(beanName, wrapperBean, definition);

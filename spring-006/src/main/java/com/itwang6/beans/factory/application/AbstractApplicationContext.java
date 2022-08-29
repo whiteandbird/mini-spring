@@ -2,6 +2,7 @@ package com.itwang6.beans.factory.application;
 
 import com.itwang6.BeansException;
 import com.itwang6.beans.factory.ConfigurableListableBeanFactory;
+import com.itwang6.beans.factory.aware.ApplicationContextPostProcessor;
 import com.itwang6.beans.factory.postProcessor.BeanFactoryPostProcessor;
 import com.itwang6.beans.factory.postProcessor.BeanPostProcessor;
 import com.itwang6.core.io.DefaultResourceLoader;
@@ -22,6 +23,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         refreshBeanFactory();
 
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
+        // 使用postProcessor提供applicationContext 在执行bean的创建的时候会执行这个方法
+        // 这个是第一个被加入的PostProcessor 所以会被第一个执行
+        beanFactory.addPostProcessor(new ApplicationContextPostProcessor(this));
 
         // 执行几大流程
         // 1 执行beanFactoryPostProcessor

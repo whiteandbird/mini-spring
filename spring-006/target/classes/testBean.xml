@@ -1,7 +1,10 @@
 <beans>
-    <bean class="com.itwang6.UserService" init="init1" destroy="destroy">
+    <bean class="com.itwang6.UserService" init="init1" destroy="destroy" scope="prototype">
         <property name="name" >123</property>
+        <property name="userDao" ref="factoryBean"></property>
     </bean>
     <bean class="com.itwang6.MyBeanFactoryPostProcessor"/>
     <bean class="com.itwang6.MyBeanPostProcessor" destroy="test"/>
+    <bean class="com.itwang6.MyAware"/>
+    <bean class="com.itwang6.ProxyFactoryBean" id="factoryBean"></bean>
 </beans>

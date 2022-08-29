@@ -4,13 +4,18 @@ import com.itwang6.BeansException;
 import com.itwang6.beans.factory.config.BeanDefinition;
 import com.itwang6.beans.factory.config.ConfigurableBeanFactory;
 import com.itwang6.beans.factory.postProcessor.BeanPostProcessor;
+import com.itwang6.beans.factory.specialBean.FactoryBean;
+import com.itwang6.beans.factory.specialBean.FactoryBeanRegistrySupport;
+import com.itwang6.util.ClassUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
+
+    private ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
 
      private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
@@ -37,9 +42,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     protected <T> T doGetBean(final String beanName, final Object[] args){
         Object bean = getSingleton(beanName);
         if(bean != null){
-            return (T) bean;
+            return (T) getObjectForBeanInstance(bean, beanName);
         }
-        return (T)createBean(beanName, getBeanDefinition(beanName), args);
+        bean = createBean(beanName, getBeanDefinition(beanName), args);
+        return (T) getObjectForBeanInstance(bean, beanName);
     }
 
 
@@ -47,6 +53,19 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     public void addPostProcessor(BeanPostProcessor beanPostProcessor) {
         this.beanPostProcessors.remove(beanPostProcessor);
         this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    private Object getObjectForBeanInstance(Object bean, String beanName){
+        if(!(bean instanceof FactoryBean)){
+            return bean;
+        }
+        // 需要从 factoryBean 里面拿去东西
+        // 拿到实际的对象
+        Object cacheBean = getCacheObjectForFactoryBean(beanName);
+        if(cacheBean == null){
+            cacheBean = getObjectFromFactoryBean((FactoryBean<?>) bean, beanName);
+        }
+        return cacheBean;
     }
 
 
@@ -59,4 +78,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException;
 
+
+    public ClassLoader getClassLoader(){
+        return this.classLoader;
+    }
 }

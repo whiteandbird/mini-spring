@@ -70,6 +70,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             // init Method or destroy method
             String destroy = beanItem.getAttribute("destroy");
             String init = beanItem.getAttribute("init");
+            String beanScope = beanItem.getAttribute("scope");
 
             name = StrUtil.isEmpty(id) ? (StrUtil.isEmpty(name) ? StrUtil.lowerFirst(beanClass.getSimpleName()) :name ): id;
             BeanDefinition beanDefinition = new BeanDefinition(beanClass);
@@ -79,6 +80,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             }
             if(StrUtil.isNotEmpty(init)){
                 beanDefinition.setInitializationMethodName(init);
+            }
+
+            // 设置单例
+            if(StrUtil.isNotEmpty(beanScope)){
+                beanDefinition.setScope(beanScope);
             }
 
             NodeList propertyNodeList = beanItem.getChildNodes();

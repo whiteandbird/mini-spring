@@ -7,8 +7,12 @@ package com.itwang6;
  */
 public class UserService {
     private String name;
+
+    private IUserDao userDao;
+
     public void sayHello(){
-        System.out.println(" ====== say hello ="+name+"=========");
+        System.out.println(userDao.hashCode());
+        System.out.println(" ====== say hello ="+userDao.queryUserName("1")+"=========");
     }
 
     public void init1(){
