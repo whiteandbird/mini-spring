@@ -5,13 +5,19 @@ package com.itwang6;
  * @Descripter:
  * @Date: 2022:08:27  12:34
  */
-public class UserService {
+public class UserService implements IUserService{
     private String name;
 
     private IUserDao userDao;
 
+    @Override
     public void sayHello(){
         System.out.println(" ====== say hello ="+userDao.queryUserName("1")+"=========");
+    }
+
+    @Override
+    public void hello() {
+        System.out.println("llllll");
     }
 
     public void init1(){
