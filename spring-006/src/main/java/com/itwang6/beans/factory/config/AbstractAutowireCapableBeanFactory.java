@@ -13,6 +13,7 @@ import com.itwang6.beans.factory.lifescope.DisposableAdapter;
 import com.itwang6.beans.factory.lifescope.DisposableBean;
 import com.itwang6.beans.factory.lifescope.InitializeBean;
 import com.itwang6.beans.factory.postProcessor.BeanPostProcessor;
+import com.itwang6.beans.factory.postProcessor.InstantiationAwareBeanPostProcessor;
 import com.itwang6.beans.factory.support.AbstractBeanFactory;
 import com.itwang6.beans.factory.support.InstantiationStrategy;
 import com.itwang6.beans.factory.support.SimpleInstantiationStrategy;
@@ -32,6 +33,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException {
         Object bean = null;
         try{
+            bean = resolveBeforeInstantiation(beanName, beanDefinition);
+            if(bean != null){
+                return bean;
+            }
+
             bean = createBeanInstance(beanName, beanDefinition, args);
             // 优先填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
@@ -164,5 +170,26 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }catch (Exception e){
             log.info("填充属性异常 beanName: {}, {}",beanName,e);
         }
+    }
+
+    private Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition){
+        Object o = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if(o != null){
+            // 为啥只执行后置处理
+            o = applyBeanPostProcessorAfterInitialization(o, beanName);
+        }
+        return o;
+    }
+
+
+    private Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName){
+        List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors();
+        for(BeanPostProcessor beanPostProcessor : beanPostProcessors){
+            if(beanPostProcessor instanceof InstantiationAwareBeanPostProcessor){
+                Object o = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, beanName);
+                if(o != null) return o;
+            }
+        }
+        return null;
     }
 }

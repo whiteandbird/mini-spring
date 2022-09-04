@@ -1,0 +1,19 @@
+<beans>
+    <bean id="after" class="com.itwang6.MethodAfterTest" />
+    <bean id="before" class="com.itwang6.MethodBeforeTest"/>
+
+    <bean id="advice" class="com.itwang6.beans.factory.aop.inteceptors.MethodAroundInterceptor">
+        <property name="before" ref="before"></property>
+        <property name="after" ref="after"></property>
+    </bean>
+
+
+    <bean class="com.itwang6.beans.factory.aop.advisor.AspectJExpressionPointCutAdvisor">
+        <property name="advice" ref="advice"></property>
+        <property name="expression" value="execution(* com.itwang6.IUserService.*(..))"></property>
+    </bean>
+
+    <bean class="com.itwang6.UserService"></bean>
+
+    <bean class="com.itwang6.beans.factory.aop.aspect.DefaultAdvisorAutoProxyCreator"/>
+</beans>

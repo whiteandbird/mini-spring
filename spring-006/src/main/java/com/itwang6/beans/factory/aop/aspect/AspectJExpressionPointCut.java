@@ -7,7 +7,6 @@ import org.aspectj.weaver.tools.PointcutExpression;
 import org.aspectj.weaver.tools.PointcutParser;
 import org.aspectj.weaver.tools.PointcutPrimitive;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +33,7 @@ public class AspectJExpressionPointCut implements PointCut, ClassFilter, MethodM
     }
 
     @Override
-    public boolean matchs(Class<?> clazz) {
+    public boolean matches(Class<?> clazz) {
         return pointcutExpression.couldMatchJoinPointsInType(clazz);
     }
 

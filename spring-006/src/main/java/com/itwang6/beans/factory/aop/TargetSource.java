@@ -12,4 +12,12 @@ public class TargetSource {
     public TargetSource(Object target){
         this.target = target;
     }
+
+    public Object getTarget() {
+        return target;
+    }
+
+    public Class[] getClasses(){
+        return target.getClass().getInterfaces();
+    }
 }

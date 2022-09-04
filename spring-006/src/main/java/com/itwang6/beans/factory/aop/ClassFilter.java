@@ -6,5 +6,5 @@ package com.itwang6.beans.factory.aop;
  * @Date: 2022:08:30  22:26
  */
 public interface ClassFilter {
-    boolean matchs(Class<?> clazz);
+    boolean matches(Class<?> clazz);
 }

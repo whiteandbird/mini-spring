@@ -46,6 +46,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             InputStream inputStream = resource.getInputStream();
             doLoadBeanDefinition(inputStream);
         }catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
             throw new BeanException("解析xml error");
         }
     }

@@ -16,6 +16,8 @@ public class AdvisedSupport {
 
     private MethodInterceptor methodInterceptor;
 
+    private boolean proxyTargetClass = false;
+
     public TargetSource getTargetSource() {
         return targetSource;
     }
@@ -24,7 +26,7 @@ public class AdvisedSupport {
         this.targetSource = targetSource;
     }
 
-    public MethodMatcher getMethodMatcher() {
+    public MethodMatcher getMethodMatcher(){
         return methodMatcher;
     }
 
@@ -38,5 +40,13 @@ public class AdvisedSupport {
 
     public void setMethodInterceptor(MethodInterceptor methodInterceptor) {
         this.methodInterceptor = methodInterceptor;
+    }
+
+    public boolean isProxyTargetClass() {
+        return proxyTargetClass;
+    }
+
+    public void setProxyTargetClass(boolean proxyTargetClass) {
+        this.proxyTargetClass = proxyTargetClass;
     }
 }

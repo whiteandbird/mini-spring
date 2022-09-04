@@ -12,7 +12,7 @@ public class UserService implements IUserService{
 
     @Override
     public void sayHello(){
-        System.out.println(" ====== say hello ="+userDao.queryUserName("1")+"=========");
+        System.out.println(" ====== say hello ==========");
     }
 
     @Override

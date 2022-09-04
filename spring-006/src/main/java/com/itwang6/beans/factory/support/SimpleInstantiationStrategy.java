@@ -23,6 +23,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy{
                 return beanClass.getDeclaredConstructor().newInstance();
             }
         }catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e){
+            e.printStackTrace();
             throw new BeansException("beanName ["+beanName+"] 初始化失败",e);
         }
     }
